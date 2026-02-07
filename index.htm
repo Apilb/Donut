@@ -230,13 +230,125 @@
             font-size: 0.9em;
             color: #c7254e;
         }
+
+        /* Mobile Responsiveness */
+        @media screen and (max-width: 768px) {
+            body {
+                font-size: 16px;
+            }
+
+            .container {
+                box-shadow: none;
+            }
+
+            header {
+                padding: 40px 20px;
+            }
+
+            h1 {
+                font-size: 1.8em;
+                letter-spacing: 1px;
+            }
+
+            .subtitle {
+                font-size: 1em;
+            }
+
+            .content {
+                padding: 30px 20px;
+            }
+
+            h2 {
+                font-size: 1.5em;
+                margin-top: 35px;
+            }
+
+            h3 {
+                font-size: 1.2em;
+            }
+
+            .demo-container {
+                padding: 20px 10px;
+                margin: 20px -10px;
+            }
+
+            #donut-canvas {
+                font-size: 6px;
+                line-height: 6px;
+                overflow-x: auto;
+            }
+
+            button {
+                padding: 10px 25px;
+                font-size: 14px;
+                width: 100%;
+                max-width: 250px;
+            }
+
+            .figure-container {
+                padding: 15px;
+                margin: 20px -10px;
+            }
+
+            .code-container {
+                margin: 20px -10px;
+            }
+
+            pre {
+                padding: 15px;
+                font-size: 11px;
+            }
+
+            .math-equation {
+                padding: 15px;
+                font-size: 12px;
+            }
+
+            .note {
+                padding: 12px 15px;
+                margin: 15px -5px;
+            }
+
+            ul, ol {
+                margin-left: 20px;
+            }
+
+            p {
+                text-align: left;
+            }
+        }
+
+        @media screen and (max-width: 480px) {
+            h1 {
+                font-size: 1.5em;
+            }
+
+            h2 {
+                font-size: 1.3em;
+            }
+
+            #donut-canvas {
+                font-size: 5px;
+                line-height: 5px;
+            }
+
+            .code-header {
+                flex-direction: column;
+                gap: 10px;
+                align-items: flex-start;
+            }
+
+            .copy-btn {
+                width: 100%;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
             <h1>The Spinning ASCII Donut By Apil</h1>
-            <p class="subtitle">A Journey Through 3D Graphics, Projection Mathematics, and Terminal Art                         </p>
+            <p class="subtitle">A Journey Through 3D Graphics, Projection Mathematics, and Terminal Art</p>
         </header>
 
         <div class="content">
@@ -258,9 +370,9 @@
             <section>
                 <h2>What Are We Looking At?</h2>
                 <p>
-                    This mesmerizing animation is a 3D torus (also refered to as  donut shape) rendered using only ASCII characters 
+                    This mesmerizing animation is a 3D torus (also referred to as donut shape) rendered using only ASCII characters 
                     in your terminal. What makes it special is that it combines several fundamental concepts in 
-                    computer graphics without making math too complicated, but for the sake of simplicity I have compermised The more abstract rotaion and this only rotates about x-axis, regardless of its simplicity it still teaches you important concepts such as:
+                    computer graphics without making math too complicated, but for the sake of simplicity I have compromised the more abstract rotation and this only rotates about x-axis. Regardless of its simplicity it still teaches you important concepts such as:
                 </p>
                 <ul>
                     <li><strong>3D Geometry:</strong> Parametric equations defining a torus in 3D space</li>
@@ -334,8 +446,8 @@ screenY = (d · y) / z
                 </div>
 
                 <div class="note">
-                    <strong>Your Implementation (camera at -d):</strong><br>
-                    In your code, you've positioned the camera at <code>z = -d</code> (where d = 8), 
+                    <strong>In our Implementation (camera at -d):</strong><br>
+                    In our code, you've positioned the camera at <code>z = -d</code> (where d = 8), 
                     looking toward the positive Z direction. This is why you use:
                     <div class="math-equation" style="margin-top: 10px;">
 inv = 1 / (z + d)<br>
@@ -346,7 +458,7 @@ screenY = height/2 - 8 · y · inv
 
                 <p>
                     The key difference is the <span class="highlight">z + d</span> term. By adding <code>d</code> 
-                    to <code>z</code>, you're effectively measuring the distance from the camera position at 
+                    to <code>z</code>, we're effectively measuring the distance from the camera position at 
                     <code>z = -d</code> to the object. This gives you:
                 </p>
 
@@ -517,10 +629,10 @@ int main() {
             <section>
                 <h2>Key Takeaways</h2>
                 <ul>
-                    <li>You can represent the 3d object in 2d screen with clever mathematics</li>
-                    <li>The choice of camera position affects your projection formula, in original derivation as shown in fig 1,  the camera was at the origin </li>
-                    <li>Application of dot product, for lighting and shading </li>
-                    <li>also how the basic rendering works here we Generate and matrices, which contains the pixels and their characters assigned on the basic of intensity</li>
+                    <li>You can represent the 3D object in 2D screen with clever mathematics</li>
+                    <li>The choice of camera position affects your projection formula. In original derivation as shown in fig 1, the camera was at the origin</li>
+                    <li>Application of dot product for lighting and shading</li>
+                    <li>Also how the basic rendering works: here we generate matrices which contain the pixels and their characters assigned based on intensity</li>
                 </ul>
 
                 <p>
@@ -531,7 +643,7 @@ int main() {
         </div>
 
         <footer>
-            <p>The Spinning ASCII Donut | Inspired by <href="https://www.a1k0n.net/2011/07/20/donut-math.html">Classic Donut.c by a1k0n</href></p>
+            <p>The Spinning ASCII Donut | Inspired by <a href="https://www.a1k0n.net/2011/07/20/donut-math.html" style="color: #667eea; text-decoration: none;">Classic Donut.c by a1k0n</a></p>
             <p>Explore, learn, and create!</p>
         </footer>
     </div>
