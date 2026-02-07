@@ -708,11 +708,14 @@ int main() {
                     const sy = Math.floor(height / 2 - 8 * y1 * inv);
 
                     if (sx >= 0 && sx < width && sy >= 0 && sy < height) {
-                        // Compute normal
-                        const nx = cosPhi * cosTheta;
-                        const ny = cosPhi * sinTheta;
-                        const nz = sinPhi;
+                    let nx0 = Math.cos(phi) * Math.cos(theta);
+                    let ny0 = Math.cos(phi) * Math.sin(theta);
+                    let nz0 = Math.sin(phi);
 
+                    // Rotate normal around X-axis (SAME as point rotation)
+                    let nx = nx0;
+                    let ny = ny0 * Math.cos(A) - nz0 * Math.sin(A);
+                    let nz = ny0 * Math.sin(A) + nz0 * Math.cos(A);
                         // Lambertian reflection
                         const I = Lx * nx + Ly * ny + Lz * nz;
 
