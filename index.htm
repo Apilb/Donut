@@ -614,12 +614,15 @@ int main() {
         
         // Render the screen
         for (int y = 0; y < height; y++) {
-            for (int x = 0; x < width; x++) {
-                putchar(screen[y][x]);
-            }
-            putchar('\n');
+    for (int x = 0; x < width; x++) {
+        if (screen[y][x] != ' ') {
+            printf("\033[32m%c\033[0m", screen[y][x]); // green
+        } else {
+            putchar(' ');
         }
-        
+    }
+    putchar('\n');
+}
         A += 0.04;  // Increment rotation
     }
 }</pre>
