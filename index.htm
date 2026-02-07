@@ -486,7 +486,7 @@ nz = sin(φ)
                 </div>
 
                 <p>
-                    We then normalize this vector and compute the <strong>Lambertian reflection</strong> 
+                    We then rotate this vector by our rotating vector then normalize this vector and compute the <strong>Lambertian reflection</strong> 
                     (dot product with light direction):
                 </p>
 
@@ -593,12 +593,20 @@ int main() {
                 int sy = (int)(height/2 - 8*y1*inv);
                 
                 if (sx >= 0 && sx < width && sy >= 0 && sy < height) {
-                    // Compute normal vector
-                    float nx = cos(phi)*cos(theta);
-                    float ny = cos(phi)*sin(theta);
-                    float nz = sin(phi);
-                    float nm = sqrt(nx*nx + ny*ny + nz*nz);
-                    nx /= nm; ny /= nm; nz /= nm;
+                    // Unrotated normal
+				float nx0 = cos(phi) * cos(theta);
+				float ny0 = cos(phi) * sin(theta);
+				float nz0 = sin(phi);
+				
+				// Rotate normal around X-axis (SAME as point rotation)
+				float nx = nx0;
+				float ny = ny0 * cos(A) - nz0 * sin(A);
+				float nz = ny0 * sin(A) + nz0 * cos(A);
+				
+				// Normalize (important)
+				float nm = sqrt(nx*nx + ny*ny + nz*nz);
+				nx /= nm; ny /= nm; nz /= nm;
+
                     
                     // Lambertian reflection (dot product with light)
                     float I = Lx*nx + ny*Ly + nz*Lz;
