@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Mathematics of the Spinning ASCII Donut</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            line-height: 1.8;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            min-height: 100vh;
+        }
+
+        header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 60px 40px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+            font-weight: 300;
+            letter-spacing: 2px;
+        }
+
+        .subtitle {
+            font-size: 1.1em;
+            opacity: 0.9;
+            font-style: italic;
+        }
+
+        .content {
+            padding: 50px 40px;
+        }
+
+        h2 {
+            color: #2a5298;
+            margin-top: 50px;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            border-left: 4px solid #667eea;
+            padding-left: 15px;
+        }
+
+        h3 {
+            color: #4a5568;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        p {
+            margin-bottom: 20px;
+            text-align: justify;
+        }
+
+        .demo-container {
+            background: #1a202c;
+            border-radius: 8px;
+            padding: 30px;
+            margin: 30px 0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        #donut-canvas {
+            font-family: monospace;
+            font-size: 10px;
+            line-height: 10px;
+            white-space: pre;
+            color: #00ff00;
+            text-align: center;
+            margin: 20px 0;
+            text-shadow: 0 0 5px rgba(0,255,0,0.5);
+        }
+
+        .controls {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 16px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        .figure-container {
+            background: #f7fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 30px 0;
+            text-align: center;
+        }
+
+        .figure-container img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 4px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .figure-caption {
+            margin-top: 15px;
+            font-style: italic;
+            color: #4a5568;
+            font-size: 0.95em;
+        }
+
+        .code-container {
+            background: #2d3748;
+            border-radius: 8px;
+            padding: 0;
+            margin: 30px 0;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .code-header {
+            background: #1a202c;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #4a5568;
+        }
+
+        .code-title {
+            color: #a0aec0;
+            font-family: monospace;
+            font-size: 14px;
+        }
+
+        .copy-btn {
+            padding: 6px 15px;
+            font-size: 12px;
+            background: #667eea;
+        }
+
+        pre {
+            margin: 0;
+            padding: 25px;
+            overflow-x: auto;
+            color: #e2e8f0;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .math-equation {
+            background: #f7fafc;
+            padding: 20px;
+            border-left: 4px solid #667eea;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+
+        .highlight {
+            background: #fef5e7;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: monospace;
+            color: #d35400;
+        }
+
+        .note {
+            background: #ebf8ff;
+            border-left: 4px solid #3182ce;
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        .note strong {
+            color: #2c5282;
+        }
+
+        footer {
+            background: #1a202c;
+            color: #a0aec0;
+            text-align: center;
+            padding: 30px;
+            font-size: 0.9em;
+        }
+
+        ul, ol {
+            margin-left: 30px;
+            margin-bottom: 20px;
+        }
+
+        li {
+            margin-bottom: 10px;
+        }
+
+        code {
+            background: #edf2f7;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: monospace;
+            font-size: 0.9em;
+            color: #c7254e;
+        }
+
+        /* Mobile Responsiveness */
+        @media screen and (max-width: 768px) {
+            body {
+                font-size: 16px;
+            }
+
+            .container {
+                box-shadow: none;
+            }
+
+            header {
+                padding: 40px 20px;
+            }
+
+            h1 {
+                font-size: 1.8em;
+                letter-spacing: 1px;
+            }
+
+            .subtitle {
+                font-size: 1em;
+            }
+
+            .content {
+                padding: 30px 20px;
+            }
+
+            h2 {
+                font-size: 1.5em;
+                margin-top: 35px;
+            }
+
+            h3 {
+                font-size: 1.2em;
+            }
+
+            .demo-container {
+                padding: 20px 10px;
+                margin: 20px -10px;
+            }
+
+            #donut-canvas {
+                font-size: 6px;
+                line-height: 6px;
+                overflow-x: auto;
+            }
+
+            button {
+                padding: 10px 25px;
+                font-size: 14px;
+                width: 100%;
+                max-width: 250px;
+            }
+
+            .figure-container {
+                padding: 15px;
+                margin: 20px -10px;
+            }
+
+            .code-container {
+                margin: 20px -10px;
+            }
+
+            pre {
+                padding: 15px;
+                font-size: 11px;
+            }
+
+            .math-equation {
+                padding: 15px;
+                font-size: 12px;
+            }
+
+            .note {
+                padding: 12px 15px;
+                margin: 15px -5px;
+            }
+
+            ul, ol {
+                margin-left: 20px;
+            }
+
+            p {
+                text-align: left;
+            }
+        }
+
+        @media screen and (max-width: 480px) {
+            h1 {
+                font-size: 1.5em;
+            }
+
+            h2 {
+                font-size: 1.3em;
+            }
+
+            #donut-canvas {
+                font-size: 5px;
+                line-height: 5px;
+            }
+
+            .code-header {
+                flex-direction: column;
+                gap: 10px;
+                align-items: flex-start;
+            }
+
+            .copy-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>The Spinning ASCII Donut By Apil</h1>
+            <p class="subtitle">A Journey Through 3D Graphics, Projection Mathematics, and Terminal Art</p>
+        </header>
+
+        <div class="content">
+            <section>
+                <h2>Interactive Demo</h2>
+                <p>
+                    Before we dive into the mathematics, experience the magic yourself. This is a real-time ASCII 
+                    representation of a 3D torus (donut) rotating in space, rendered entirely with characters!
+                </p>
+
+                <div class="demo-container">
+                    <div id="donut-canvas"></div>
+                    <div class="controls">
+                        <button id="toggleBtn">Start Animation</button>
+                    </div>
+                </div>
+            </section>
+
+            <section>
+                <h2>What Are We Looking At?</h2>
+                <p>
+                    This mesmerizing animation is a 3D torus (also referred to as donut shape) rendered using only ASCII characters 
+                    in your terminal. What makes it special is that it combines several fundamental concepts in 
+                    computer graphics without making math too complicated, but for the sake of simplicity I have compromised the more abstract rotation and this only rotates about x-axis. Regardless of its simplicity it still teaches you important concepts such as:
+                </p>
+                <ul>
+                    <li><strong>3D Geometry:</strong> Parametric equations defining a torus in 3D space</li>
+                    <li><strong>3D Rotation:</strong> Rotation matrices transforming points in space</li>
+                    <li><strong>Perspective Projection:</strong> Converting 3D coordinates to 2D screen positions</li>
+                    <li><strong>Lighting:</strong> Computing surface brightness using the Lambertian reflection model</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>The Mathematics Behind the Magic</h2>
+
+                <h3>1. Generating the Torus</h3>
+                <p>
+                    A torus is created by revolving a circle around an axis. We use two angles to parameterize 
+                    every point on the surface:
+                </p>
+                <ul>
+                    <li><code>θ (theta)</code>: The angle around the major circle (0 to 2π)</li>
+                    <li><code>φ (phi)</code>: The angle around the minor circle (0 to 2π)</li>
+                </ul>
+
+                <div class="math-equation">
+x = (R + r·cos(φ)) · cos(θ)<br>
+y = (R + r·cos(φ)) · sin(θ)<br>
+z = r · sin(φ)
+                </div>
+
+                <p>Where:</p>
+                <ul>
+                    <li><code>R = 5</code> is the distance from the center of the torus to the center of the tube</li>
+                    <li><code>r = 2</code> is the radius of the tube itself</li>
+                </ul>
+
+                <h3>2. Rotating the Donut</h3>
+                <p>
+                    To make the donut spin, we apply a rotation around the X-axis. The rotation transforms 
+                    the y and z coordinates:
+                </p>
+
+                <div class="math-equation">
+y' = y·cos(A) - z·sin(A)<br>
+z' = y·sin(A) + z·cos(A)
+                </div>
+
+                <p>
+                    Where <code>A</code> is the rotation angle that increases continuously (<code>A += 0.04</code> 
+                    each frame).
+                </p>
+
+                <h3>3. Perspective Projection</h3>
+                <p>
+                    This is where your implementation differs from the standard approach! Let's understand both:
+                </p>
+
+                <div class="figure-container">
+                    <img src="https://www.a1k0n.net/img/perspective.png" alt="Standard Perspective Projection">
+                    <div class="figure-caption">
+                        Figure 1: Standard perspective projection with camera at origin
+                    </div>
+                </div>
+
+                <div class="note">
+                    <strong>Standard Projection (camera at origin):</strong><br>
+                    In the typical formulation, the camera is at the origin (0, 0, 0) looking down the +Z axis, 
+                    and the projection plane is at distance <code>d</code>:
+                    <div class="math-equation" style="margin-top: 10px;">
+screenX = (d · x) / z<br>
+screenY = (d · y) / z
+                    </div>
+                </div>
+
+                <div class="note">
+                    <strong>Your Implementation (camera at -d):</strong><br>
+                    In your code, you've positioned the camera at <code>z = -d</code> (where d = 8), 
+                    looking toward the positive Z direction. This is why you use:
+                    <div class="math-equation" style="margin-top: 10px;">
+inv = 1 / (z + d)<br>
+screenX = width/2 + 15 · x · inv<br>
+screenY = height/2 - 8 · y · inv
+                    </div>
+                </div>
+
+                <p>
+                    The key difference is the <span class="highlight">z + d</span> term. By adding <code>d</code> 
+                    to <code>z</code>, you're effectively measuring the distance from the camera position at 
+                    <code>z = -d</code> to the object. This gives you:
+                </p>
+
+                <ul>
+                    <li><strong>Camera position:</strong> (0, 0, -8)</li>
+                    <li><strong>Distance to point:</strong> z - (-8) = z + 8</li>
+                    <li><strong>Projection:</strong> Points farther from camera (larger z+d) appear smaller</li>
+                </ul>
+
+                <p>
+                    The constants <code>15</code> and <code>8</code> are scaling factors that control 
+                    the field of view and ensure the donut fits nicely on your 80×24 character screen.
+                </p>
+
+                <h3>4. Surface Normal and Lighting</h3>
+                <p>
+                    To determine which character to display (brightness), we need to calculate how much light 
+                    hits each surface point. The surface normal vector at any point on the torus is:
+                </p>
+
+                <div class="math-equation">
+nx = cos(φ) · cos(θ)<br>
+ny = cos(φ) · sin(θ)<br>
+nz = sin(φ)
+                </div>
+
+                <p>
+                    We then normalize this vector and compute the <strong>Lambertian reflection</strong> 
+                    (dot product with light direction):
+                </p>
+
+                <div class="math-equation">
+I = L<sub>x</sub>·n<sub>x</sub> + L<sub>y</sub>·n<sub>y</sub> + L<sub>z</sub>·n<sub>z</sub>
+                </div>
+
+                <p>
+                    Where the light vector is <code>L = (0, 1, -1)</code> normalized. The intensity <code>I</code> 
+                    ranges from -1 to 1, and we only render points where <code>I > 0</code> (facing the light).
+                </p>
+
+                <h3>5. Character Gradient Mapping</h3>
+                <p>
+                    Finally, we map the light intensity to ASCII characters. The gradient string 
+                    <code>".,-~:;=!*#$@"</code> represents increasing brightness:
+                </p>
+
+                <div class="math-equation">
+characterIndex = I × (gradientLength - 1)
+                </div>
+
+                <p>
+                    Darker surfaces get <code>.</code> or <code>,</code>, while brighter surfaces get 
+                    <code>#</code>, <code>$</code>, or <code>@</code>.
+                </p>
+            </section>
+
+            <section>
+                <h2>The Complete Source Code</h2>
+                <p>
+                    Here's the full C implementation. Feel free to copy, modify, and experiment!
+                </p>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-title">donut.c</span>
+                        <button class="copy-btn" onclick="copyCode()">Copy Code</button>
+                    </div>
+                    <pre id="sourceCode">#include&lt;stdio.h&gt;
+#include&lt;math.h&gt;
+#include&lt;windows.h&gt;
+#include&lt;stdlib.h&gt;
+#define width 80
+#define height 24
+
+void clearScreen() {
+    // Making a function cause Microsoft won't allow me to use system()
+    COORD coordScreen = { 0, 0 };
+    DWORD cCharsWritten;
+    CONSOLE_SCREEN_BUFFER_INFO csbi;
+    DWORD dwConSize;
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    GetConsoleScreenBufferInfo(hConsole, &csbi);
+    dwConSize = csbi.dwSize.X * csbi.dwSize.Y;
+    FillConsoleOutputCharacter(hConsole, (TCHAR)' ', dwConSize, 
+                               coordScreen, &cCharsWritten);
+    GetConsoleScreenBufferInfo(hConsole, &csbi);
+    FillConsoleOutputAttribute(hConsole, csbi.wAttributes, dwConSize, 
+                               coordScreen, &cCharsWritten);
+    SetConsoleCursorPosition(hConsole, coordScreen);
+}
+
+int main() {
+    float R = 5;      // Major radius
+    float r = 2;      // Minor radius
+    float d = 8;      // Camera distance
+    float A = 0;      // Rotation angle
+    const char *gradient = ".,-~:;=!*#$@";
+    int glen = strlen(gradient);
+    
+    // Light direction vector (normalized)
+    float Lx = 0, Ly = 1, Lz = -1;
+    float L_len = sqrt(Lx*Lx + Ly*Ly + Lz*Lz);
+    Lx /= L_len; Ly /= L_len; Lz /= L_len; 
+    
+    char screen[height][width];
+    
+    while (1) {
+        clearScreen();  
+        
+        // Clear the screen buffer
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                screen[i][j] = ' ';
+            }
+        }
+        
+        // Generate torus points
+        for (float theta = 0; theta < 2*3.14; theta += 0.05) {
+            for (float phi = 0; phi < 2*3.14; phi += 0.05) {
+                // Torus parametric equations
+                float x = (R + r*cos(phi)) * cos(theta);
+                float y = (R + r*cos(phi)) * sin(theta);
+                float z = r * sin(phi);
+                
+                // Rotation around X-axis
+                float y1 = y*cos(A) - z*sin(A);
+                float z1 = y*sin(A) + z*cos(A);
+                
+                // Perspective projection (camera at z = -d)
+                float inv = 1 / (z1 + d);
+                int sx = (int)(width/2 + 15*x*inv);
+                int sy = (int)(height/2 - 8*y1*inv);
+                
+                if (sx >= 0 && sx < width && sy >= 0 && sy < height) {
+                    // Compute normal vector
+                    float nx = cos(phi)*cos(theta);
+                    float ny = cos(phi)*sin(theta);
+                    float nz = sin(phi);
+                    float nm = sqrt(nx*nx + ny*ny + nz*nz);
+                    nx /= nm; ny /= nm; nz /= nm;
+                    
+                    // Lambertian reflection (dot product with light)
+                    float I = Lx*nx + ny*Ly + nz*Lz;
+                    
+                    if (I < 0) continue;  // Back-facing, skip
+                    
+                    // Map intensity to character
+                    int lumi = (int)(I * (glen - 1));
+                    screen[sy][sx] = gradient[lumi];
+                }
+            }
+        }
+        
+        // Render the screen
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                putchar(screen[y][x]);
+            }
+            putchar('\n');
+        }
+        
+        A += 0.04;  // Increment rotation
+    }
+}</pre>
+                </div>
+            </section>
+
+            <section>
+                <h2>Key Takeaways</h2>
+                <ul>
+                    <li>You can represent the 3D object in 2D screen with clever mathematics</li>
+                    <li>The choice of camera position affects your projection formula. In original derivation as shown in fig 1, the camera was at the origin</li>
+                    <li>Application of dot product for lighting and shading</li>
+                    <li>Also how the basic rendering works: here we generate matrices which contain the pixels and their characters assigned based on intensity</li>
+                </ul>
+
+                <p>
+                    This donut is a beautiful example of how fundamental computer graphics concepts can be 
+                    implemented with minimal dependencies. It's pure mathematics rendered as art!
+                </p>
+            </section>
+        </div>
+
+        <footer>
+            <p>The Spinning ASCII Donut | Inspired by <a href="https://www.a1k0n.net/2011/07/20/donut-math.html" style="color: #667eea; text-decoration: none;">Classic Donut.c by a1k0n</a></p>
+            <p>Explore, learn, and create!</p>
+        </footer>
+    </div>
+
+    <script>
+        const width = 80;
+        const height = 24;
+        let animationRunning = false;
+        let animationId = null;
+        let A = 0;
+
+        const canvas = document.getElementById('donut-canvas');
+        const toggleBtn = document.getElementById('toggleBtn');
+
+        function renderFrame() {
+            const R = 5;
+            const r = 2;
+            const d = 8;
+            const gradient = ".,-~:;=!*#$@";
+            const glen = gradient.length;
+
+            // Light direction (normalized)
+            const Lx = 0, Ly = 0.5773502691896258, Lz = -0.5773502691896258;
+
+            // Initialize screen
+            const screen = Array(height).fill().map(() => Array(width).fill(' '));
+            const zBuffer = Array(height).fill().map(() => Array(width).fill(-Infinity));
+
+            // Generate torus
+            for (let theta = 0; theta < 2 * Math.PI; theta += 0.07) {
+                for (let phi = 0; phi < 2 * Math.PI; phi += 0.02) {
+                    // Torus parametric equations
+                    const cosTheta = Math.cos(theta);
+                    const sinTheta = Math.sin(theta);
+                    const cosPhi = Math.cos(phi);
+                    const sinPhi = Math.sin(phi);
+
+                    const x = (R + r * cosPhi) * cosTheta;
+                    const y = (R + r * cosPhi) * sinTheta;
+                    const z = r * sinPhi;
+
+                    // Rotation around X-axis
+                    const cosA = Math.cos(A);
+                    const sinA = Math.sin(A);
+                    const y1 = y * cosA - z * sinA;
+                    const z1 = y * sinA + z * cosA;
+
+                    // Perspective projection
+                    const inv = 1 / (z1 + d);
+                    const sx = Math.floor(width / 2 + 15 * x * inv);
+                    const sy = Math.floor(height / 2 - 8 * y1 * inv);
+
+                    if (sx >= 0 && sx < width && sy >= 0 && sy < height) {
+                        // Compute normal
+                        const nx = cosPhi * cosTheta;
+                        const ny = cosPhi * sinTheta;
+                        const nz = sinPhi;
+
+                        // Lambertian reflection
+                        const I = Lx * nx + Ly * ny + Lz * nz;
+
+                        if (I > 0 && z1 > zBuffer[sy][sx]) {
+                            zBuffer[sy][sx] = z1;
+                            const lumi = Math.floor(I * (glen - 1));
+                            screen[sy][sx] = gradient[lumi];
+                        }
+                    }
+                }
+            }
+
+            // Render to canvas
+            canvas.textContent = screen.map(row => row.join('')).join('\n');
+        }
+
+        function animate() {
+            renderFrame();
+            A += 0.04;
+            if (animationRunning) {
+                animationId = requestAnimationFrame(animate);
+            }
+        }
+
+        toggleBtn.addEventListener('click', () => {
+            animationRunning = !animationRunning;
+            if (animationRunning) {
+                toggleBtn.textContent = 'Stop Animation';
+                animate();
+            } else {
+                toggleBtn.textContent = 'Start Animation';
+                if (animationId) {
+                    cancelAnimationFrame(animationId);
+                }
+            }
+        });
+
+        function copyCode() {
+            const code = document.getElementById('sourceCode').textContent;
+            navigator.clipboard.writeText(code).then(() => {
+                const btn = event.target;
+                const originalText = btn.textContent;
+                btn.textContent = 'Copied!';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                }, 2000);
+            });
+        }
+
+        // Initial render
+        renderFrame();
+    </script>
+</body>
+</html>
